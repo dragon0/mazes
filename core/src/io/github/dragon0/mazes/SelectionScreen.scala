@@ -16,5 +16,9 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
         game.batch.draw(img, 0, 0);
         game.batch.end();
     }
+
+    override def dispose : Unit = {
+        img.dispose()
+    }
 }
 

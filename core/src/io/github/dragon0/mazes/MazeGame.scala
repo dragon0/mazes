@@ -10,4 +10,9 @@ class MazeGame extends Game {
         batch = new SpriteBatch()
         setScreen(new SelectionScreen(this))
     }
+
+    override def dispose : Unit = {
+        batch.dispose()
+        super.dispose()
+    }
 }
