@@ -6,18 +6,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class MazeGame extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
+class MazeGame extends ApplicationAdapter {
+	var batch:SpriteBatch = _
+	var img:Texture = _
 	
-	@Override
-	public void create () {
+	override def create : Unit = {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 	}
 
-	@Override
-	public void render () {
+	override def render : Unit = {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
