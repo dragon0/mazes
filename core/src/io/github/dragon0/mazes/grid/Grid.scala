@@ -5,6 +5,7 @@ class Grid(val rows: Int, val columns: Int){
     val grid = prepareGrid
 
     val size = rows * columns
+    var distances: Option[Distances] = None
 
     private def prepareGrid : Array[Array[Cell]] = {
         (0 until rows) map {
@@ -44,6 +45,12 @@ class Grid(val rows: Int, val columns: Int){
 
     def eachCell(f: Cell=>Unit): Unit = {
         for( row <- grid; cell <- row ) f(cell)
+    }
+
+    def colorFor(cell: Cell): Option[(Float, Float, Float, Float)] = None
+
+    def setDistances(distances:Distances) = {
+        this.distances = Option(distances)
     }
 }
 

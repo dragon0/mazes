@@ -51,5 +51,25 @@ class Cell(val row: Int, val column: Int){
         }
         res
     }
+
+    def distances : Distances = {
+        // New distances using this as root
+        var distances = new Distances(this)
+        var frontier = Set(this)
+
+        while(frontier.nonEmpty){
+            var newFrontier:Set[Cell] = Set()
+            for(cell <- frontier; linked <- cell.linkSet){
+                if(!(distances.cells contains linked)){
+                    distances.cells = distances.cells + (linked -> (distances(cell) + 1))
+                    newFrontier = newFrontier + linked
+                }
+            }
+            frontier = newFrontier
+        }
+
+        distances
+    }
+
 }
 

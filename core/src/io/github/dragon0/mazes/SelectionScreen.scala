@@ -1,4 +1,5 @@
 package io.github.dragon0.mazes;
+import io.github.dragon0.mazes.grid._;
 import io.github.dragon0.mazes.algorithms._;
 
 import com.badlogic.gdx.ScreenAdapter;
@@ -12,6 +13,7 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
 
     var width = Gdx.graphics.getWidth()
     var height = Gdx.graphics.getHeight()
+    var showSolution = false
 
     override def render(delta:Float) : Unit = {
         if(checkInput){
@@ -23,13 +25,17 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
     }
 
     def checkInput : Boolean = {
+        if(Gdx.input.isKeyJustPressed(Keys.SPACE)){
+            showSolution = !showSolution
+            true
+        }
         if(Gdx.input.isKeyJustPressed(Keys.Q)){
-            game.setScreen(new MazeScreen(game, BinaryTree))
-            false
+            setScreen(BinaryTree)
+            true
         }
         else if(Gdx.input.isKeyJustPressed(Keys.W)){
-            game.setScreen(new MazeScreen(game, Sidewinder))
-            false
+            setScreen(Sidewinder)
+            true
         }
         else if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             Gdx.app.exit;
@@ -40,10 +46,22 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
         }
     }
 
+    def setScreen(algo: MazeAlgorithm) = {
+        val cell_size = 10
+        val grid = if(showSolution)
+            new ColoredGrid((height-1)/cell_size, (width-1)/cell_size)
+        else
+            new Grid((height-1)/cell_size, (width-1)/cell_size)
+        game.setScreen(new MazeScreen(game, this, grid, cell_size, algo))
+    }
+
     def drawOptions : Unit = {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
+        game.font.draw(game.batch,
+            "SPACE. " + (if(showSolution) "Colored" else "Grayscale"),
+            width/5, height-(height/4)*2);
         game.font.draw(game.batch,
             "Q. Binary Tree", width/5, height-(height/4));
         game.font.draw(game.batch,

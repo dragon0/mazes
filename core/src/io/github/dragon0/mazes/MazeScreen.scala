@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap;
 
-class MazeScreen(val game:MazeGame, val algo:MazeAlgorithm) extends ScreenAdapter {
+class MazeScreen(val game:MazeGame, val sScreen: SelectionScreen, val grid: Grid, val cell_size: Int, val algo:MazeAlgorithm) extends ScreenAdapter {
 
     var width = Gdx.graphics.getWidth()
     var height = Gdx.graphics.getHeight()
@@ -33,11 +33,11 @@ class MazeScreen(val game:MazeGame, val algo:MazeAlgorithm) extends ScreenAdapte
 
     def checkInput : Boolean = {
         if(Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
-            game.setScreen(new SelectionScreen(game))
+            game.setScreen(sScreen)
             false
         }
         else if(Gdx.input.isKeyJustPressed(Keys.SPACE)){
-            game.setScreen(new MazeScreen(game, algo))
+            sScreen.setScreen(algo)
             false
         }
         else {
@@ -46,9 +46,16 @@ class MazeScreen(val game:MazeGame, val algo:MazeAlgorithm) extends ScreenAdapte
     }
 
     def drawMaze : Texture = {
-        val cell_size = 10
-        val grid = new Grid((height-1)/cell_size, (width-1)/cell_size)
         algo(grid)
+
+        val start = grid(grid.rows/2, grid.columns/2)
+        start match {
+            case Some(s) => {
+                grid.setDistances(s.distances)
+            }
+            case None => {}
+        }
+
         val img_width = cell_size * grid.columns
         val img_height = cell_size * grid.rows
 
@@ -59,14 +66,35 @@ class MazeScreen(val game:MazeGame, val algo:MazeAlgorithm) extends ScreenAdapte
             Pixmap.Format.RGBA8888)
         pixmap.setColor(background)
         pixmap.fill()
-        pixmap.setColor(wall)
 
+        def coords(cell:Cell) = (
+                cell.column * cell_size,
+                cell.row * cell_size,
+                (cell.column + 1) * cell_size,
+                (cell.row + 1) * cell_size
+
+            )
+
+        // fill
         grid eachCell {
             cell =>
-                val x1 = cell.column * cell_size
-                val y1 = cell.row * cell_size
-                val x2 = (cell.column + 1) * cell_size
-                val y2 = (cell.row + 1) * cell_size
+                val (x1, y1, x2, y2) = coords(cell)
+                val w = x2 - x1
+                val h = y2 - y1
+
+                grid.colorFor(cell) match {
+                    case Some((r, g, b, a)) =>
+                        pixmap.setColor(r, g, b, a)
+                        pixmap.fillRectangle(x1, y1, w, h)
+                    case None => {}
+                }
+        }
+
+        pixmap.setColor(wall)
+        // walls
+        grid eachCell {
+            cell =>
+                val (x1, y1, x2, y2) = coords(cell)
 
                 if(!cell.north.isDefined){
                     pixmap.drawLine(x1, y1, x2, y1)
