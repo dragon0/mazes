@@ -37,6 +37,14 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
             setScreen(Sidewinder)
             true
         }
+        else if(Gdx.input.isKeyJustPressed(Keys.E)){
+            setScreen(AldousBorder)
+            true
+        }
+        else if(Gdx.input.isKeyJustPressed(Keys.R)){
+            setScreen(Wilsons)
+            true
+        }
         else if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             Gdx.app.exit;
             false
@@ -61,11 +69,15 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
         game.batch.begin();
         game.font.draw(game.batch,
             "SPACE. " + (if(showSolution) "Colored" else "Grayscale"),
-            width/5, height-(height/4)*2);
+            width/5, height-(height/5)*4);
         game.font.draw(game.batch,
-            "Q. Binary Tree", width/5, height-(height/4));
+            "Q. Binary Tree", width/5, height-(height/5));
         game.font.draw(game.batch,
-            "W. Sidewinder", (width/5)*2, height-(height/4));
+            "W. Sidewinder", (width/5)*2, height-(height/5));
+        game.font.draw(game.batch,
+            "E. Aldous-Broder", (width/5)*3, height-(height/5));
+        game.font.draw(game.batch,
+            "R. Wilson's", (width/5)*4, height-(height/5));
         game.batch.end();
     }
 

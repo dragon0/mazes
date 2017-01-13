@@ -58,3 +58,60 @@ object Sidewinder extends MazeAlgorithm {
     }
 }
 
+object AldousBorder extends MazeAlgorithm {
+    override def apply(grid: Grid): Unit = {
+        val rand = new Random
+        var cell = grid.randomCell
+        var unvisited = grid.size - 1
+
+        while(unvisited > 0){
+            var neighbors = cell.neighbors
+            var index = rand.nextInt(neighbors.length)
+            var neighbor = neighbors(index)
+
+            if(neighbor.linkSet.isEmpty){
+                cell.link(neighbor)
+                unvisited = unvisited - 1
+            }
+
+            cell = neighbor
+        }
+    }
+}
+
+object Wilsons extends MazeAlgorithm {
+    override def apply(grid: Grid): Unit = {
+        val rand = new Random
+        var unvisited: List[Cell] = List()
+        grid eachCell { cell => unvisited = cell :: unvisited  }
+        def sample(l: List[Cell]) = {
+            val index = rand.nextInt(l.length)
+            l(index)
+        }
+
+        var first = sample(unvisited)
+        unvisited = unvisited diff List(first)
+
+        while(unvisited.nonEmpty){
+            var cell = sample(unvisited)
+            var path = Vector(cell)
+
+            while(unvisited contains cell){
+                cell = sample(cell.neighbors)
+                var position = path indexOf cell
+                if(position >= 0) {
+                    path = path take position+1
+                }
+                else {
+                    path = path :+ cell
+                }
+            }
+
+            for(index <- 0 until path.length-1){
+                path(index) link path(index+1)
+            }
+            unvisited = unvisited diff path
+        }
+    }
+}
+
