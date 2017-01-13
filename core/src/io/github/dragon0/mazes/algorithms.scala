@@ -1,6 +1,7 @@
 package io.github.dragon0.mazes.algorithms
 import io.github.dragon0.mazes.grid._;
 import scala.util.Random
+import scala.annotation.tailrec
 
 abstract class MazeAlgorithm extends Function1[Grid, Unit] {
     override def apply(grid: Grid): Unit;
@@ -111,6 +112,65 @@ object Wilsons extends MazeAlgorithm {
             }
             unvisited = unvisited diff path
         }
+    }
+}
+
+object HuntAndKill extends MazeAlgorithm {
+    override def apply(grid: Grid): Unit = {
+        val rand = new Random
+        var current_? = Option(grid.randomCell)
+
+        while(current_? isDefined) {
+            var current = current_? get
+            var unvisited_neighbors = current.neighbors filter {_.linkSet.isEmpty}
+            if(unvisited_neighbors nonEmpty) {
+                var neighbor = unvisited_neighbors(
+                    rand.nextInt(unvisited_neighbors.size))
+                current link neighbor
+                current_? = Some(neighbor)
+            }
+            else {
+                current_? = None
+
+                grid.cells.takeWhile {
+                    cell =>
+                        var visited_neighbors = cell.neighbors filter {_.linkSet.nonEmpty}
+                        if(cell.linkSet.isEmpty && visited_neighbors.nonEmpty) {
+                            current_? = Some(cell)
+                            var neighbor = visited_neighbors(
+                                rand.nextInt(visited_neighbors.size))
+                            cell link neighbor
+                            false
+                        }
+                        else true
+                }
+            }
+        }
+    }
+}
+
+object RecursiveBacktracker extends MazeAlgorithm {
+    def apply(grid: Grid): Unit = {
+        val rand = new Random
+
+        @tailrec
+        def recur(stack: List[Cell]): Unit = {
+            if(stack.nonEmpty) {
+                val current = stack head
+                val neighbors = current.neighbors filter {_.linkSet.isEmpty}
+
+                if(neighbors.isEmpty)
+                    recur(stack tail)
+                else {
+                    val neighbor = neighbors(rand.nextInt(neighbors.size))
+                    current link neighbor
+                    recur(neighbor :: stack)
+                }
+            }
+        }
+
+        recur(List(grid.randomCell))
+
     }
 }
 

@@ -45,6 +45,14 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
             setScreen(Wilsons)
             true
         }
+        else if(Gdx.input.isKeyJustPressed(Keys.A)){
+            setScreen(HuntAndKill)
+            true
+        }
+        else if(Gdx.input.isKeyJustPressed(Keys.S)){
+            setScreen(RecursiveBacktracker)
+            true
+        }
         else if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             Gdx.app.exit;
             false
@@ -78,6 +86,10 @@ class SelectionScreen(val game: MazeGame) extends ScreenAdapter {
             "E. Aldous-Broder", (width/5)*3, height-(height/5));
         game.font.draw(game.batch,
             "R. Wilson's", (width/5)*4, height-(height/5));
+        game.font.draw(game.batch,
+            "A. Hunt and Kill", width/5, height-(height/5)*2);
+        game.font.draw(game.batch,
+            "S. Recursive Backtracker", (width/5)*2, height-(height/5)*2);
         game.batch.end();
     }
 
