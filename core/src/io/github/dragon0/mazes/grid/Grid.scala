@@ -47,6 +47,8 @@ class Grid(val rows: Int, val columns: Int){
         for( row <- grid; cell <- row ) f(cell)
     }
 
+    def cells = for( row <- grid; cell <- row ) yield cell
+
     def colorFor(cell: Cell): Option[(Float, Float, Float, Float)] = None
 
     def setDistances(distances:Distances) = {

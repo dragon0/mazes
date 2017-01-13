@@ -82,9 +82,8 @@ object AldousBorder extends MazeAlgorithm {
 object Wilsons extends MazeAlgorithm {
     override def apply(grid: Grid): Unit = {
         val rand = new Random
-        var unvisited: List[Cell] = List()
-        grid eachCell { cell => unvisited = cell :: unvisited  }
-        def sample(l: List[Cell]) = {
+        var unvisited = grid cells
+        def sample(l: Seq[Cell]) = {
             val index = rand.nextInt(l.length)
             l(index)
         }
